@@ -5,7 +5,55 @@ An advanced, full-stack AI Flashcard Generator application featuring a **determi
 Optimised for frictionless one-click deployment directly on **Vercel Serverless Functions**.
 
 ---
+```
+🗺️ System Architecture Flowchart
+   [ User Browser (index.html) ] 
+       │
+       │ (1) User Input: Topic & Count
+       ▼
+ ┌────────────────────────────────────────────────────────┐
+ │ Vercel Serverless Function Host (`main.py`)            │
+ │                                                        │
+ │   ┌──────────────────────────────────────────────┐     │
+ │   │ FastAPI Route Handler: `POST /api/generate`  │     │
+ │   └──────────────────────┬───────────────────────┘     │
+ │                          │                             │
+ │                          ▼ (2) Invokes Graph           │
+ │   ┌──────────────────────────────────────────────┐     │
+ │   │          LangGraph State Machine             │     │
+ │   │                                              │     │
+ │   │  [ Entry Point ]                             │     │
+ │   │        │                                     │     │
+ │   │        ▼                                     │     │
+ │   │   ┌───────────────────────────────────────┐  │     │
+ │   │   │ Node 1: search_web_node               │  │     │
+ │   │   │ ───────────────────────────────────── │  │     │
+ │   │   │ Connects to live internet to scrape   │  │     │
+ │   │   │ real-time, accurate context data.     │  │     │
+ │   │   └──────────────────┬────────────────────┘  │     │
+ │   │                      │                       │     │
+ │   │                      ▼ (3) State update:     │     │
+ │   │                            "search_context"  │     │
+ │   │   ┌───────────────────────────────────────┐  │     │
+ │   │   │ Node 2: generate_cards_node           │  │     │
+ │   │   │ ───────────────────────────────────── │  │     │
+ │   │   │ Injects context + applies Pydantic    │  │     │
+ │   │   │ structural constraints on LLM output. │  │     │
+ │   │   └──────────────────┬────────────────────┘  │     │
+ │   │                      │                       │     │
+ │   │                      ▼ (4) State update:     │     │
+ │   │                            "final_cards"     │     │
+ │   │                   [ END ]                    │     │
+ │   └──────────────────────┬───────────────────────┘     │
+ │                          │                             │
+ │                          ▼ (5) Return JSON Response    │
+ └──────────────────────────┼─────────────────────────────┘
+                            │
+                            ▼
+[ Client UI renders interactive 3D Flashcards ]
 
+
+```
 ## 🚀 Features
 
 - **Agentic State Machine:** Powered by LangGraph to orchestrate step-by-step workflow state transitions (`Search` ➔ `Structure Generation`).
